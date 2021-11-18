@@ -79,6 +79,7 @@ int main()
     auto gpu_t1 = high_resolution_clock::now();
     vecSub << <gridSize, blockSize >> > (d_a, d_b, d_c, n);
     cudaDeviceSynchronize();
+    cudaMemcpy(h_c, d_c, bytes, cudaMemcpyDeviceToHost);
     auto gpu_t2 = high_resolution_clock::now();
 
     auto gpu_exe_time_ms = duration_cast<milliseconds>(gpu_t2 - gpu_t1);
@@ -86,7 +87,6 @@ int main()
 
     printf("Execution time: %d ms\n", gpu_exe_time_ms.count());
 
-    cudaMemcpy(h_c, d_c, bytes, cudaMemcpyDeviceToHost);
 
     for (int i = 0; i < 5; i++) {
         printf("a[%d] = %d, b[%d] = %d, c[%d] = %d\n", i, h_a[i], i, h_b[i], i, h_c[i]);
